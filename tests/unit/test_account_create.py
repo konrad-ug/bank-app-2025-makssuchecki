@@ -30,7 +30,7 @@ class TestAccount:
         assert account.balance == 0.0
 
     def test_senior_nopromo(self):
-        account = Account("John", "Doe", "60010000000", "PROM_KOD")
+        account = Account("John", "Doe", "60011111111", "PROM_KOD")
         assert account.balance == 0.0
     def test_notseenior_promo(self):
         account = Account("John", "Doe", "04290000000", "PROM_KOD")
