@@ -30,5 +30,5 @@ class PersonalAccount(Account):
     def express_outgoing(self, amount):
         fee = 1.0
         total_amount = amount + fee
-        if amount > 0 and total_amount <= self.balance:
-            self.balance -= total.amount
+        if (amount > 0 and total_amount <= self.balance + fee):
+            self.balance -= total_amount

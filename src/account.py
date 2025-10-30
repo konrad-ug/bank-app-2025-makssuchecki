@@ -11,3 +11,6 @@ class Account:
         if (amount > 0.0 ):
             self.balance += amount
 
+    def express_incoming(self, amount: float) -> None:
+        if (amount > 0.0 ):
+            self.balance += amount
