@@ -32,3 +32,5 @@ class PersonalAccount(Account):
         total_amount = amount + fee
         if (amount > 0 and total_amount <= self.balance + fee):
             self.balance -= total_amount
+            self.history.append(f"-{amount}")
+            self.history.append(f"-{int(fee)}")
