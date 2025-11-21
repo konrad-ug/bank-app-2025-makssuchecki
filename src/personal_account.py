@@ -33,7 +33,7 @@ class PersonalAccount(Account):
         if (amount > 0 and total_amount <= self.balance + fee):
             self.balance -= total_amount
             self.history.append(f"-{amount}")
-            self.history.append(f"-{int(fee)}")
+            self.history.append(f"-{float(fee)}")
 
     def condition_one(self):
         last_three = self.history[-3:]
