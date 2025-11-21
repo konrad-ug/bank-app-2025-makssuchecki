@@ -34,3 +34,25 @@ class PersonalAccount(Account):
             self.balance -= total_amount
             self.history.append(f"-{amount}")
             self.history.append(f"-{int(fee)}")
+
+    def condition_one(self):
+        last_three = self.history[-3:]
+        for i in range(len(last_three)):
+            value = float(last_three[i])
+            if (value < 0):
+                return False
+        return True
+
+    def condition_two(self, amount):
+        last_five = self.history[-5:]
+        total = 0   
+        for i in range(len(last_five)):
+            value = float(last_five[i])
+            total += value  
+        return amount < total
+        
+    def submit_for_loan(self, amount):
+        submission = (self.condition_one() or self.condition_two(amount))
+        if (submission):
+            self.balance += amount
+        return submission
