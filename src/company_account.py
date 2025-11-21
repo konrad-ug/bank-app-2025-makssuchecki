@@ -15,4 +15,18 @@ class CompanyAccount(Account):
         if (amount > 0 and total_amount <= self.balance + fee):
             self.balance -= total_amount
             self.history.append(f"-{amount}")
-            self.history.append(f"-{int(fee)}")
+            self.history.append(f"-{(fee)}")
+
+
+    def paid_zus(self):
+        if ("-1775" in self.history):
+            return True
+        return False
+        
+    def take_loan(self, amount):
+        if (self.balance >= (2*amount) and self.paid_zus()):
+            self.balance += amount
+            return True
+        return False 
+        
+            
