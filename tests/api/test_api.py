@@ -1,6 +1,6 @@
 import pytest
 import requests
-
+import uuid
 
 class TestAPI:
     url= "http://127.0.0.1:5000/api"
@@ -18,8 +18,7 @@ class TestAPI:
         all_accounts = requests.get(f"{self.url}/accounts").json()
         for account in all_accounts:
             requests.delete(f"{self.url}/accounts/{account['pesel']}")
-
-
+    
     def test_create_accounts(self):
         url = f"{self.url}/accounts"
         payload = {
@@ -53,3 +52,21 @@ class TestAPI:
         response = requests.get(url)
         
         assert response.status_code == 404
+
+    def test_update_account(self):
+        pesel="89092909825"
+        update_data={
+            "name": "Jimmy",
+            "surname": "Hatfold",
+            "pesel": "99999999999"
+        }
+        response = requests.patch(f"{self.url}/accounts/{pesel}", json=update_data)
+        assert response.status_code == 200
+        assert response.json()["message"] == "Account updated"
+
+    def test_delete_account(self):
+        pesel="89092909825"
+        response = requests.delete(f"{self.url}/accounts/{pesel}")
+        assert response.status_code == 200
+        assert response.json()["message"] == "Account deleted"
+        
