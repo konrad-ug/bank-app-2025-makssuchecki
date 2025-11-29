@@ -22,7 +22,7 @@ class TestAccountRegistry:
         account2 = PersonalAccount("Jane", "Day", "99887766553")
         registry.add_account(account1)
         registry.add_account(account2)
-        all_accounts = registry.all_accounts()
+        all_accounts = registry.get_all_accounts()
         assert all_accounts == [account1, account2]
 
     def test_accounts_count(self, registry: AccountRegistry):

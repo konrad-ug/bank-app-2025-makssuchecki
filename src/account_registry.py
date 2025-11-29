@@ -14,8 +14,13 @@ class AccountRegistry:
                 return account
         return None
             
-    def all_accounts(self):
+    def get_all_accounts(self):
         return self.accounts
     
     def count_accounts(self):
         return len(self.accounts)
+
+    def delete_account(self, pesel):
+        original_len = len(self.accounts)
+        self.accounts = [acc for acc in self.accounts if acc.pesel != pesel]
+        return len(self.accounts) < original_len
