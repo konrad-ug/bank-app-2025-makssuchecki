@@ -34,6 +34,9 @@ class PersonalAccount(Account):
             self.balance -= total_amount
             self.history.append(f"-{amount}")
             self.history.append(f"-{float(fee)}")
+            return True
+        else:
+            return False
 
     def condition_one(self):
         last_three = self.history[-3:]

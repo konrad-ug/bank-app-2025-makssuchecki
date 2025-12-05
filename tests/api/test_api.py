@@ -19,16 +19,6 @@ class TestAPI:
         for account in all_accounts:
             requests.delete(f"{self.url}/accounts/{account['pesel']}")
     
-    def test_create_accounts(self):
-        url = f"{self.url}/accounts"
-        payload = {
-            "name": "James",
-            "surname": "Hetfield",
-            "pesel": "89092909825"
-        }
-        response = requests.post(url, json=payload)
-        assert response.status_code == 201
-        assert response.json()['message'] == "Account created"
 
     def test_get_account_count(self):
         url = f"{self.url}/accounts/count"
@@ -69,4 +59,85 @@ class TestAPI:
         response = requests.delete(f"{self.url}/accounts/{pesel}")
         assert response.status_code == 200
         assert response.json()["message"] == "Account deleted"
+    
+
+    def test_create_same_pesel_accounts(self):
+        url = f"{self.url}/accounts"
+        payload = {
+            "name": "James",
+            "surname": "Hetfield",
+            "pesel": "89092909825"
+        }
+        response = requests.post(url, json=payload)
+        assert response.status_code == 409
+        assert response.json()['error'] == "Account with such pesel already exists"
         
+    
+    def test_incoming_transfer(self):
+        pesel="89092909825"
+        url= f"{self.url}/accounts/{pesel}/transfer"
+        payload={
+            "amount": 500,
+            "type": "incoming"
+        }
+        response = requests.post(url, json=payload)
+        assert response.status_code == 200
+        assert response.json()['message'] == "Transfer approved"
+
+    def test_outgoing_transfer(self):
+        pesel="89092909825"
+        url= f"{self.url}/accounts/{pesel}/transfer"
+        
+        payload={
+            "amount": 1000,
+            "type": "incoming"
+        }
+        requests.post(url, json=payload)
+
+        payload={
+            "amount": 500,
+            "type": "outgoing"
+        }
+        response = requests.post(url, json=payload)
+        assert response.status_code == 200
+        assert response.json()['message'] == "Transfer approved"
+
+    def test_outgoing_error_transfer(self):
+        pesel="89092909825"
+        url= f"{self.url}/accounts/{pesel}/transfer"
+        payload={
+            "amount": 500,
+            "type": "outgoing"
+        }
+        response = requests.post(url, json=payload)
+        assert response.status_code == 422
+        assert response.json()['error'] == "Insufficent funds"
+
+    def test_outgoing_express_transfer(self):
+        pesel="89092909825"
+        url= f"{self.url}/accounts/{pesel}/transfer"
+        
+        payload={
+            "amount": 1000,
+            "type": "incoming"
+        }
+        requests.post(url, json=payload)
+
+        payload={
+            "amount": 500,
+            "type": "express"
+        }
+        response = requests.post(url, json=payload)
+        assert response.status_code == 200
+        assert response.json()['message'] == "Transfer approved"
+        
+    def test_outgoing_error_express(self):
+        pesel="89092909825"
+        url= f"{self.url}/accounts/{pesel}/transfer"
+        payload={
+            "amount": 500,
+            "type": "express"
+        }
+        response = requests.post(url, json=payload)
+        assert response.status_code == 422
+        assert response.json()['error'] == "Insufficent funds"

@@ -8,6 +8,9 @@ class Account:
         if (amount < self.balance and amount > 0.0):
             self.balance -= amount
             self.history.append(f"-{amount}")
+            return True
+        else:
+            return False
 
     def incoming_transfer(self, amount: float) -> None:
         if (amount > 0.0 ):
