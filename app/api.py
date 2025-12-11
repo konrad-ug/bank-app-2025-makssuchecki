@@ -10,12 +10,16 @@ registry = AccountRegistry()
 def create_account():
     data = request.get_json()
     print(f"Create account request: {data}")
-    account = PersonalAccount(
-        data["name"], 
-        data["surname"], 
-        data["pesel"])
-    registry.add_account(account)
-    return jsonify({"message": "Account created"}), 201
+    
+    if registry.search_account_pesel(data["pesel"]) is None: 
+        account = PersonalAccount(
+            data["name"], 
+            data["surname"], 
+            data["pesel"])
+        registry.add_account(account)
+        return jsonify({"message": "Account created"}), 201
+    else:
+        return jsonify({"error": "Account with such pesel already exists"}), 409
 
 @app.route("/api/accounts", methods=["GET"])
 def get_all_accounts():
@@ -62,3 +66,37 @@ def delete_account(pesel):
         return jsonify({"message": "Account deleted"}), 200
     else: 
         return jsonify({"error": "Account not found"}), 404
+
+@app.route("/api/accounts/<pesel>/transfer", methods=["POST"])
+def transfer(pesel):
+    account = registry.search_account_pesel(pesel)
+    
+    if account is None:
+        return jsonify({"error": "Account not found"}), 404
+    
+    data = request.get_json()
+    
+    if "type" not in data or "amount" not in data:
+        return jsonify({"error": "Missing fields required"}), 200
+    
+    transfer_type = data["type"]
+    amount = data["amount"]
+
+    if transfer_type == "incoming":
+        account.incoming_transfer(amount)
+        return jsonify({"message": "Transfer approved"}), 200
+
+    elif transfer_type == "outgoing":
+        if account.outgoing_transfer(amount):
+            return jsonify({"message": "Transfer approved"}), 200
+        else:
+            return jsonify({"error": "Insufficent funds"}), 422
+    elif transfer_type == "express":
+        if account.express_outgoing(amount):
+            return jsonify({"message": "Transfer approved"}), 200
+        else:
+            return jsonify({"error": "Insufficent funds"}), 422
+        
+    else:
+        return jsonify({"error": "Unknown transfer type"}), 
+
