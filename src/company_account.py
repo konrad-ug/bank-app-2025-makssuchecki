@@ -1,13 +1,21 @@
 from src.account import Account
-
+from flask import Flask, request, jsonify
+import datetime
 class CompanyAccount(Account):
     def __init__(self, company_name, nip):
         super().__init__()
         self.company_name = company_name
-        if (len(nip) != 10):
-            self.nip = "Invalid" 
-        else:
+        if not self.is_nip_valid(nip):
+            self.nip = "Invalid"
+        elif is_nip_active_MF_registry(nip):
             self.nip = nip
+        else:
+            raise ValueError("Company not registered!") 
+    
+    def is_nip_valid(self, nip):
+        if (isinstance(nip, str) and len(nip) == 10 and nip.isdigit()):
+            return True
+        return False
 
     def express_outgoing(self, amount):
         fee = 5.0
@@ -29,4 +37,20 @@ class CompanyAccount(Account):
             return True
         return False 
         
-            
+    def is_nip_active_MF_registry(self, nip):
+        MF_URL= "https://wl-test.mf.gov.pl/"
+        today_date = datetime.today().strftime("%Y-%m-%d")
+        url = f"{MF_URL}api/search/nip/{nip}?date={today_date}"
+        
+        print(f"Sending requests to {url}")
+        response = requests.get(url)
+        print(f"Response status code: {response.json()}")
+        if response.status_code != 200:
+            return False
+
+        data = response.json() or {}
+        result = data.get("result") or {}
+        subject = result.get("subject") or {}
+        status = subject.get("statusVat")
+
+        return status == "Czynny"
