@@ -1,13 +1,15 @@
 from src.account import Account
 from flask import Flask, request, jsonify
-import datetime
+from datetime import datetime
+import requests
+
 class CompanyAccount(Account):
     def __init__(self, company_name, nip):
         super().__init__()
         self.company_name = company_name
         if not self.is_nip_valid(nip):
             self.nip = "Invalid"
-        elif is_nip_active_MF_registry(nip):
+        elif self.is_nip_active_MF_registry(nip):
             self.nip = nip
         else:
             raise ValueError("Company not registered!") 

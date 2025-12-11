@@ -1,7 +1,11 @@
 from src.personal_account import PersonalAccount
 from src.company_account import CompanyAccount
 import pytest
+from pytest_mock import MockFixture
 
+@pytest.fixture(autouse=True)
+def mock_nip_check(mocker: MockFixture):
+    mocker.patch.object(CompanyAccount, "is_nip_active_MF_registry", return_value=True)
 class TestTransferHistory:
     @pytest.fixture(params=["personal", "company"])
     def account(self, request):
