@@ -2,11 +2,18 @@ from src.account import Account
 from src.personal_account import PersonalAccount
 from src.company_account import CompanyAccount 
 import pytest
+from pytest_mock import MockFixture
+
+@pytest.fixture(autouse=True)
+def mock_nip_check(mocker: MockFixture):
+    mocker.patch.object(CompanyAccount, "is_nip_active_MF_registry", return_value=True)
+    mocker.patch("src.company_account.requests.get")
 
 class TestTransfers:
     @pytest.fixture()
     def personal_account(self):
         return PersonalAccount("John", "Doe", "00000000000")
+    
     @pytest.fixture()
     def company_account(self):
         return CompanyAccount("Firmex", "1234567890")

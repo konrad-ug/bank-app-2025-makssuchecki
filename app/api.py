@@ -98,5 +98,5 @@ def transfer(pesel):
             return jsonify({"error": "Insufficent funds"}), 422
         
     else:
-        return jsonify({"error": "Unknown transfer type"}), 
+        return jsonify({"error": "Unknown transfer type"}), 422
 
