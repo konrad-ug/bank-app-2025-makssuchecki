@@ -2,8 +2,10 @@ from src.account import Account
 from flask import Flask, request, jsonify
 from datetime import datetime
 import requests
+import os
 
 class CompanyAccount(Account):
+    BANK_APP_MF_URL = os.getenv("BANK_APP_MF_URL", "https://wl-test.mf.gov.pl/")
     def __init__(self, company_name, nip):
         super().__init__()
         self.company_name = company_name
@@ -40,13 +42,13 @@ class CompanyAccount(Account):
         return False 
         
     def is_nip_active_MF_registry(self, nip):
-        MF_URL= "https://wl-test.mf.gov.pl/"
         today_date = datetime.today().strftime("%Y-%m-%d")
-        url = f"{MF_URL}api/search/nip/{nip}?date={today_date}"
+        url = f"{self.BANK_APP_MF_URL}api/search/nip/{nip}?date={today_date}"
         
         print(f"Sending requests to {url}")
         response = requests.get(url)
         print(f"Response status code: {response.json()}")
+        
         if response.status_code != 200:
             return False
 
