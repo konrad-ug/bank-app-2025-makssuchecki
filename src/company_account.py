@@ -15,7 +15,8 @@ class CompanyAccount(Account):
             self.nip = nip
         else:
             raise ValueError("Company not registered!") 
-    
+    def history_prefix(self):
+        return "Company account history"
     def is_nip_valid(self, nip):
         if (isinstance(nip, str) and len(nip) == 10 and nip.isdigit()):
             return True

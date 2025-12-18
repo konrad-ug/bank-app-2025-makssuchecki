@@ -12,7 +12,8 @@ class PersonalAccount(Account):
         self.promo_kod = promo_kod
         
         self.valid_promo()
-                
+    def history_prefix(self):
+        return "Personal account history"                
                 
     def valid_promo(self):
             if self.pesel == "Invalid":
