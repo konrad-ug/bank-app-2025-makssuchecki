@@ -13,7 +13,7 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  unit-tests:
 
     runs-on: ubuntu-latest
 
@@ -42,6 +42,20 @@ jobs:
       run: |
         python -m coverage report
 
-#    - name: Fail coverage
-#      run: |
-#        python -m coverage report --fail-under=100
+    # - name: Fail coverage
+    #   run: |
+    #     python -m coverage report --fail-under=100
+
+  api-tests:
+    runs-on: ubuntu-latest
+    needs: unit-tests
+    steps:
+    - name: Start flask
+      run: |
+        export FLASK_APP=app/api.py
+        export FLASK_ENV=development
+        export PYTHONPATH=$GITHUB_WORKSPACE
+        flask run &
+    - name: Execute API tests
+      run: |
+        python3 -m pytest tests/api

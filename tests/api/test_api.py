@@ -6,19 +6,19 @@ class TestAPI:
     url= "http://127.0.0.1:5000/api"
     @pytest.fixture(autouse=True)
     def set_up(self):
-        url = f"{self.url}/accounts"
+        
+        all_accounts = requests.get(f"{self.url}/accounts").json()
+        for account in all_accounts:
+            requests.delete(f"{self.url}/accounts/{account['pesel']}")
+    
         payload = {
             "name": "James",
             "surname": "Hetfield",
             "pesel": "89092909825"
         }
-        response = requests.post(url, json=payload)
+        response = requests.post(f"{self.url}/accounts", json=payload)
         assert response.status_code == 201
-        yield
-        all_accounts = requests.get(f"{self.url}/accounts").json()
-        for account in all_accounts:
-            requests.delete(f"{self.url}/accounts/{account['pesel']}")
-    
+
 
     def test_get_account_count(self):
         url = f"{self.url}/accounts/count"

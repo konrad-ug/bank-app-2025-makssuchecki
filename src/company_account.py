@@ -1,5 +1,4 @@
 from src.account import Account
-from flask import Flask, request, jsonify
 from datetime import datetime
 import requests
 import os
