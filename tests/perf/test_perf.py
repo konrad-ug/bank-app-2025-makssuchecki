@@ -9,10 +9,12 @@ class TestPerformance:
     @pytest.fixture(autouse=True, scope="function")
     def clear(self):
         response = requests.get(f"{self.url}/accounts", timeout=self.timeout)
+        assert response.status_code == 200
 
         for account in response.json():
             pesel = account["pesel"]
             response = requests.delete(f"{self.url}/accounts/{pesel}", timeout=self.timeout)
+            assert response.status_code == 200
 
     def test_create_then_delete_account(self):
         for _ in range(100):
