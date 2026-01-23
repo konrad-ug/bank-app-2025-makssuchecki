@@ -111,7 +111,7 @@ class TestAPI:
         }
         response = requests.post(url, json=payload)
         assert response.status_code == 422
-        assert response.json()['error'] == "Insufficent funds"
+        assert response.json()['error'] == "Transfer rejected"
 
     def test_outgoing_express_transfer(self):
         pesel="89092909825"
@@ -140,4 +140,4 @@ class TestAPI:
         }
         response = requests.post(url, json=payload)
         assert response.status_code == 422
-        assert response.json()['error'] == "Insufficent funds"
+        assert response.json()['error'] == "Transfer rejected"

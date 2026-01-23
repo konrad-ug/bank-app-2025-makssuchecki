@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-
+from src.account import Account
 from src.account_registry import AccountRegistry
 from src.personal_account import PersonalAccount
 
@@ -41,7 +41,8 @@ def get_account_by_pesel(pesel):
     if account is None:
         return jsonify({"error": "Account not found"}), 404
         
-    return jsonify({"name": account.first_name}), 200 
+    return jsonify({"name": account.first_name, "surname": account.last_name, 
+                    "pesel": account.pesel, "balance": account.balance }), 200 
 
 @app.route("/api/accounts/<pesel>", methods=["PATCH"])
 def update_account(pesel):
@@ -77,25 +78,26 @@ def transfer(pesel):
     data = request.get_json()
     
     if "type" not in data or "amount" not in data:
-        return jsonify({"error": "Missing fields required"}), 200
+        return jsonify({"error": "Missing fields required"}), 400
     
     transfer_type = data["type"]
     amount = data["amount"]
 
     if transfer_type == "incoming":
-        account.incoming_transfer(amount)
+        if not account.incoming_transfer(amount):
+            return jsonify({"error": "Invalid amount"}), 422
         return jsonify({"message": "Transfer approved"}), 200
 
     elif transfer_type == "outgoing":
-        if account.outgoing_transfer(amount):
-            return jsonify({"message": "Transfer approved"}), 200
-        else:
-            return jsonify({"error": "Insufficent funds"}), 422
+        if not account.outgoing_transfer(amount):
+            return jsonify({"error": "Transfer rejected"}), 422
+        return jsonify({"message": "Transfer approved"}), 200
+
     elif transfer_type == "express":
-        if account.express_outgoing(amount):
-            return jsonify({"message": "Transfer approved"}), 200
-        else:
-            return jsonify({"error": "Insufficent funds"}), 422
+        if not account.express_outgoing(amount):
+            return jsonify({"error": "Transfer rejected"}), 422
+        return jsonify({"message": "Transfer approved"}), 200
+
         
     else:
         return jsonify({"error": "Unknown transfer type"}), 422
