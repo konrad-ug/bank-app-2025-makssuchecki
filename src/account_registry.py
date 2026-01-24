@@ -24,3 +24,5 @@ class AccountRegistry:
         original_len = len(self.accounts)
         self.accounts = [acc for acc in self.accounts if acc.pesel != pesel]
         return len(self.accounts) < original_len
+    def clear(self):
+        self.accounts = []
