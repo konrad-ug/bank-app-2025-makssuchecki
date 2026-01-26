@@ -141,3 +141,17 @@ class TestAPI:
         response = requests.post(url, json=payload)
         assert response.status_code == 422
         assert response.json()['error'] == "Transfer rejected"
+
+    def test_load_all(self):
+        url = f"{self.url}/accounts/load"
+        response = requests.patch(url)
+        
+        assert response.status_code == 200
+        assert response.json()["message"] == "Accounts loaded from a database"
+
+    def test_save_all(self):
+        url = f"{self.url}/accounts/save"
+        response = requests.patch(url)
+        
+        assert response.status_code == 200
+        assert response.json()["message"] == "Accounts saved to a database"

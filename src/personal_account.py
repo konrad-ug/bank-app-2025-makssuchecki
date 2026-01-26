@@ -60,3 +60,11 @@ class PersonalAccount(Account):
         if (submission):
             self.balance += amount
         return submission
+    
+    def to_dict(self):
+        return {
+            "name": self.first_name,
+            "surname": self.last_name,
+            "pesel": self.pesel,
+            "balance": self.balance
+        }

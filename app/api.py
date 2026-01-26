@@ -1,8 +1,7 @@
 from flask import Flask, request, jsonify
-from src.account import Account
 from src.account_registry import AccountRegistry
 from src.personal_account import PersonalAccount
-
+from src.mongo_accounts_repository import MongoAccountsRepository
 app = Flask(__name__)
 registry = AccountRegistry()
 
@@ -102,3 +101,19 @@ def transfer(pesel):
     else:
         return jsonify({"error": "Unknown transfer type"}), 422
 
+@app.route("/api/accounts/save", methods=["PATCH"])
+def save_to_db():
+    repo = MongoAccountsRepository()
+    repo.save_all(registry.get_all_accounts())
+    return jsonify({"message": "Accounts saved to a database"}), 200
+
+@app.route("/api/accounts/load", methods=["PATCH"])
+def load_from_db():
+    repo = MongoAccountsRepository()
+    accounts = repo.load_all() or []
+
+    registry.clear()
+    for account in accounts:
+        registry.add_account(account)
+
+    return jsonify({"message": "Accounts loaded from a database"}), 200
